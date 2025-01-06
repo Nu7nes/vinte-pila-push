@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Events</title>
+    </head>
+    <body>
+        <p>Olá mundo!</p>
+        <div id="messageBox"></div>
+        <script>
+            function notifyMe() {
+                if (!("Notification" in window)) {
+                    alert("This browser does not support desktop notification");
+                } else if (Notification.permission === "granted") {
+                    handleServiceWorker();
+                } else if (Notification.permission !== "denied") {
+                    Notification.requestPermission().then((permission) => {
+                        if (permission === "granted") {
+                            handleServiceWorker();
+                        }
+                    });
+                }
+            }
+
+            notifyMe();
+
+            async function handleServiceWorker() {
+                navigator.serviceWorker
+                    .register("service-worker.js")
+                    .then(async (serviceWorker) => {
+                        serviceWorker.update();
+
+                        let subscription =
+                            await serviceWorker.pushManager.getSubscription();
+
+                        if (!subscription) {
+                            const publicKeyResponse =
+                                (await api.get) <
+                                { publicKey: string } >
+                                "/notification/push/public_key";
+
+                            await serviceWorker.pushManager.subscribe({
+                                userVisibleOnly: true,
+                                applicationServerKey:
+                                    publicKeyResponse.data.publicKey,
+                            });
+
+                            subscription =
+                                await serviceWorker.pushManager.getSubscription();
+                        }
+
+                        await axios.post(
+                            "http://localhost:3333/notification/push/register",
+                            {
+                                subscription,
+                            }
+                        );
+
+                        await axios.post(
+                            "http://localhost:3333/notification/push/send",
+                            {
+                                subscription,
+                            }
+                        );
+                    });
+            }
+        </script>
+    </body>
+</html>
