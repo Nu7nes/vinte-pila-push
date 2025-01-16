@@ -25,20 +25,20 @@ export class PushNotification {
 
     private init() {
         WebPush.setVapidDetails(
-            "https://localhost:3333",
+            "https://localhost:3000",
             this.publicKey,
             this.privateKey
         );
     }
 
     public sendKey(req: Request, res: Response): any {
-        res.send({ privateKey: this.publicKey });
+        res.json({ publicKey: this.publicKey });
     }
 
     public registerSub(req: Request, res: Response) {
         console.log(req.body);
-        RedisClient.updateValue("subscription", JSON.stringify(req.body));
-        return res.sendStatus(201);
+        // RedisClient.updateValue("subscription", JSON.stringify(req.body));
+        return res.status(201).json({ data: req.body });
     }
 
     public async sendPush(req: Request, res: Response) {

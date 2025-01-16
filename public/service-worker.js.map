@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["service-worker.ts"],
+  "sourcesContent": ["/// <reference no-default-lib=\"true\"/>\r\n/// <reference lib=\"esnext\" />\r\n/// <reference lib=\"webworker\" />\r\n\r\ninterface INotificationPayload {\r\n    icon: string;\r\n    title: string;\r\n    body: string;\r\n    imageUrl?: string;\r\n}\r\n\r\nconst sw = self as unknown as ServiceWorkerGlobalScope & typeof globalThis;\r\n\r\nsw.addEventListener(\"push\", (event) => {\r\n    const notificationPayload = event.data?.json() as INotificationPayload;\r\n\r\n    event.waitUntil(\r\n        sw.registration.showNotification(notificationPayload.title, {\r\n            icon: notificationPayload.icon,\r\n            body: notificationPayload.body,\r\n            // image: notificationPayload.imageUrl,\r\n        })\r\n    );\r\n});\r\n"],
+  "mappings": "AAWA,IAAMA,EAAK,KAEXA,EAAG,iBAAiB,OAASC,GAAU,CACnC,IAAMC,EAAsBD,EAAM,MAAM,KAAK,EAE7CA,EAAM,UACFD,EAAG,aAAa,iBAAiBE,EAAoB,MAAO,CACxD,KAAMA,EAAoB,KAC1B,KAAMA,EAAoB,IAE9B,CAAC,CACL,CACJ,CAAC",
+  "names": ["sw", "event", "notificationPayload"]
+}

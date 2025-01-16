@@ -35,36 +35,66 @@
                             await serviceWorker.pushManager.getSubscription();
 
                         if (!subscription) {
-                            const publicKeyResponse =
-                                (await api.get) <
-                                { publicKey: string } >
-                                "/notification/push/public_key";
+                            // Obter a chave pública
+                            const publicKeyResponse = await fetch(
+                                "http://localhost:3000/notification/push/public_key"
+                            );
+                            const { publicKey } =
+                                await publicKeyResponse.json();
 
-                            await serviceWorker.pushManager.subscribe({
-                                userVisibleOnly: true,
-                                applicationServerKey:
-                                    publicKeyResponse.data.publicKey,
-                            });
-
+                            // Assinar o serviço de push
                             subscription =
-                                await serviceWorker.pushManager.getSubscription();
+                                await serviceWorker.pushManager.subscribe({
+                                    userVisibleOnly: true,
+                                    applicationServerKey:
+                                        urlBase64ToUint8Array(publicKey),
+                                });
                         }
 
-                        await axios.post(
-                            "http://localhost:3333/notification/push/register",
+                        // Registrar a assinatura no servidor
+                        await fetch(
+                            "http://localhost:3000/notification/push/register",
                             {
-                                subscription,
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({ subscription }),
                             }
                         );
 
-                        await axios.post(
-                            "http://localhost:3333/notification/push/send",
+                        // Enviar notificação de teste
+                        await fetch(
+                            "http://localhost:3000/notification/push/send",
                             {
-                                subscription,
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({ subscription }),
                             }
                         );
+                    })
+                    .catch((error) => {
+                        console.error("Erro no Service Worker:", error);
                     });
             }
+
+            function urlBase64ToUint8Array(base64String) {
+                const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+                const base64 = (base64String + padding)
+                    .replace(/\-/g, "+")
+                    .replace(/_/g, "/");
+                const rawData = window.atob(base64);
+                const outputArray = new Uint8Array(rawData.length);
+
+                for (let i = 0; i < rawData.length; ++i) {
+                    outputArray[i] = rawData.charCodeAt(i);
+                }
+                return outputArray;
+            }
+
+            handleServiceWorker();
         </script>
     </body>
 </html>

@@ -1,6 +1,7 @@
 import express from "express";
 import router from "./routes";
 import cors from "cors";
+import morgan from "morgan";
 import RedisClient, { RedisConnection } from "./models/database";
 
 export class App {
@@ -9,14 +10,15 @@ export class App {
 
     constructor() {
         this.server = express();
+        this.cors();
         this.middleware();
         this.router();
-        this.cors();
         // this.database = RedisClient;
     }
 
     private middleware() {
         this.server.use(express.json());
+        this.server.use(morgan('tiny'));
     }
 
     private router() {

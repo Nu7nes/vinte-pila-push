@@ -16,4 +16,6 @@ import { HTMLHandler } from "./services/HTMLHandler";
 //     setTimeout(initExtraction, 30 * 1000);
 // })();
 
-new App().server.listen(3000);
+new App().server.listen(3000, () => {
+    console.log("Rodando 3000");
+});

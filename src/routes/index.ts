@@ -4,8 +4,19 @@ import pushNotification from "../controllers/Notification";
 
 const router = Router();
 
-router.get("/notification/push/public_key", pushNotification.sendKey.bind(pushNotification));
+router.get(
+    "/notification/push/public_key",
+    pushNotification.sendKey.bind(pushNotification)
+);
 
-router.post("/notification/push/send", pushNotification.registerSub.bind(pushNotification));
+router.post(
+    "/notification/push/send",
+    pushNotification.registerSub.bind(pushNotification)
+);
+
+router.post(
+    "/notification/push/register",
+    pushNotification.registerSub.bind(pushNotification)
+);
 
 export default router;
