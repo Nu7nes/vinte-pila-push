@@ -44,13 +44,13 @@ export class PushNotification {
     public async sendPush(req: Request, res: Response) {
         const { subscription } = req.body as ISubscription;
 
-        WebPush.sendNotification(
+        await WebPush.sendNotification(
             subscription,
             JSON.stringify({
-                icon: "your-icon-link.png",
+                icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuf0CNLCmGf5kI_viGSFH2CBixDb_-HV5ddA&s",
                 title: "Your title",
                 body: "Content of your message",
-                imageUrl: "your-image-link.png",
+                imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuf0CNLCmGf5kI_viGSFH2CBixDb_-HV5ddA&s",
             })
         );
 

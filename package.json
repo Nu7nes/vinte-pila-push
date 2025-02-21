@@ -5,8 +5,9 @@
     "main": "index.js",
     "scripts": {
         "start": "nodemon",
-        "build": "npx tsc",
-        "build-sw": "esbuild public/service-worker.ts --outdir=public --bundle --sourcemap --minify --format=esm --legal-comments=external"
+        "build": "npx tsc && npx tsc --project tsconfig.worker.json",
+        "dev": "npx nodemon --ext ts --exec npx tsc && npx tsc --project tsconfig.worker.json && node build/index.js",
+        "build-sw": "esbuild worker/service-worker.ts --outdir=public --bundle --sourcemap --minify --format=esm --legal-comments=external"
     },
     "author": "",
     "license": "ISC",

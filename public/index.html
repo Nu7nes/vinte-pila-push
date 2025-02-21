@@ -13,8 +13,11 @@
                 if (!("Notification" in window)) {
                     alert("This browser does not support desktop notification");
                 } else if (Notification.permission === "granted") {
+                    console.log("granted");
+                    
                     handleServiceWorker();
                 } else if (Notification.permission !== "denied") {
+                    console.log("denied");
                     Notification.requestPermission().then((permission) => {
                         if (permission === "granted") {
                             handleServiceWorker();
@@ -46,11 +49,11 @@
                             subscription =
                                 await serviceWorker.pushManager.subscribe({
                                     userVisibleOnly: true,
-                                    applicationServerKey:
-                                        urlBase64ToUint8Array(publicKey),
+                                    applicationServerKey:publicKey,
                                 });
                         }
-
+                        console.log(subscription);
+                        
                         // Registrar a assinatura no servidor
                         await fetch(
                             "http://localhost:3000/notification/push/register",

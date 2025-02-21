@@ -3,6 +3,7 @@ import router from "./routes";
 import cors from "cors";
 import morgan from "morgan";
 import RedisClient, { RedisConnection } from "./models/database";
+import path from "path";
 
 export class App {
     public server: express.Application;
@@ -18,10 +19,11 @@ export class App {
 
     private middleware() {
         this.server.use(express.json());
-        this.server.use(morgan('tiny'));
+        this.server.use(morgan("tiny"));
     }
 
     private router() {
+        this.server.use(express.static(path.resolve(__dirname, "../public")));
         this.server.use(router);
     }
 
